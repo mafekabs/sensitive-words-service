@@ -1,0 +1,381 @@
+openapi: 3.1.0
+info:
+  title: Sensitive Words API
+  description: |-
+    This API is used to mask sensitive words given any text input.
+  termsOfService: https://swagger.io/terms/
+  contact:
+    name: Botshabelo Tech Solutions
+    url: https://botshabelotechsolutions.co.za
+    email: support@botshabelotechsolutions.co.za
+  license:
+    name: MIT
+    url: https://choosealicense.com/licenses/mit/
+  version: 1.0.0
+servers:
+  - url: localhost:8080/api/v1
+tags:
+  - name: sensitive-words
+  - name: sensitive-words/{id}
+  - name: utilities
+paths:
+  /sensitive-words/{id}:
+    put:
+      tags:
+        - sensitive-words/{id}
+      summary: Update an existing sensitive word.
+      description: Update an existing sensitive word by ID.
+      operationId: updateSensitiveWord
+      parameters:
+        - name: id
+          in: path
+          description: The id of the word that is being updated.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existing sensitive word in storage
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensitiveWordRequest'
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensitiveWordResponse'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Sensitive word not found
+        '422':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+    get:
+      tags:
+        - sensitive-words/{id}
+      summary: Get sensitive word by Id.
+      description: Get sensitive word based on Id.
+      operationId: getSesitiveWordById
+      parameters:
+        - name: id
+          in: path
+          description: The id of the word that is being updated.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensitiveWordResponse'
+        '400':
+          description: Invalid id supplied
+        '404':
+          description: Id not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Result"
+
+    delete:
+      tags:
+        - sensitive-words/{id}
+      summary: Delete sensitive word.
+      description: This can only be done by the logged in Id.
+      operationId: deleteSensitiveId
+      parameters:
+        - name: id
+          in: path
+          description: The id of the word that is being updated.
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: successful
+        '400':
+          description: Invalid id supplied
+        '404':
+          description: Id not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Result"
+
+  /sensitive-words:
+    post:
+      tags:
+        - sensitive-words
+      summary: Add a new sensitive word into storage
+      description: Add a new sensitive word into storage.
+      operationId: addSensitiveWord
+      requestBody:
+        description: Create a new sensitive word into storage
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensitiveWordRequest'
+        required: true
+      responses:
+        '201':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+        '400':
+          description: Invalid input
+        '422':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Result"
+
+    get:
+      tags:
+        - sensitive-words
+      summary: Get All Sensitive Words.
+      description: Get all available sensitive words.
+      operationId: getAllSesitiveWords
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensitiveWordResponse'
+        '400':
+          description: Invalid id supplied
+        '404':
+          description: Id not found
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Result"
+
+  /sensitive-words/sanitize:
+    post:
+      tags:
+        - utilities
+      summary: Sanitize Message
+      description: Sanitize and musk out sensitive words in the request message.
+      operationId: sanitizeMessage
+      requestBody:
+        description: Sanitize and musk out sensitive words.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SanitizationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SanitizationResponse'
+        '400':
+          description: Invalid input
+        '422':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Result"
+
+components:
+  schemas:
+    EnterpriseHeaderRequest:
+      type: object
+      required:
+        - senderId
+        - messageId
+        - timestamp
+      properties:
+        senderId:
+          type: string
+          description: |-
+            The Id used to identify the Client/Requesting System
+        transactionId:
+          type: string
+          description: |-
+            The Id used to identify a unique Business Transaction related to the request
+        messageId:
+          type: string
+          description: |-
+            A unique UUID used to identify an event related to the request in case of Event Driven Systems
+        timestamp:
+          type: string
+          description: |-
+            The timestamp of when the request was initiated.
+
+    EnterpriseHeaderResponse:
+      type: object
+      required:
+        - senderId
+        - messageid
+        - relatesToId
+        - timestamp
+      properties:
+        senderId:
+          type: string
+          description: |-
+            The Id used to identify the Client/Requesting System
+        messageId:
+          type: string
+          description: |-
+            A unique UUID used to identify an event related to the request in case of Event Driven Systems
+        relatesToId:
+          type: string
+          description: |-
+            A unique UUID used representing the initially received MessageId, used for correlation purposes
+        timestamp:
+          type: string
+          description: |-
+            The timestamp of when the response was sent.
+
+    SensitiveWordRequest:
+      type: object
+      required:
+        - header
+        - payload
+      properties:
+        header:
+          $ref: '#/components/schemas/EnterpriseHeaderRequest'
+        payload:
+          type: object
+          properties:
+            sensitive-word:
+              $ref: '#/components/schemas/SensitiveWord'
+
+    SensitiveWordResponse:
+      type: object
+      required:
+        - header
+        - result
+      properties:
+        header:
+          $ref: '#/components/schemas/EnterpriseHeaderResponse'
+        result:
+          $ref: '#/components/schemas/Result'
+        payload:
+          type: object
+          properties:
+            sensitive-words:
+              type: array
+              items:
+                $ref: '#/components/schemas/SensitiveWord'
+
+    SanitizationRequest:
+      type: object
+      required:
+        - header
+        - payload
+      properties:
+        header:
+          $ref: '#/components/schemas/EnterpriseHeaderRequest'
+        payload:
+          type: object
+          properties:
+            message:
+              $ref: '#/components/schemas/Message'
+
+    SanitizationResponse:
+      type: object
+      required:
+        - header
+        - result
+      properties:
+        header:
+          $ref: '#/components/schemas/EnterpriseHeaderResponse'
+        result:
+          $ref: '#/components/schemas/Result'
+        payload:
+          type: object
+          properties:
+            message:
+              $ref: '#/components/schemas/Message'
+
+    SensitiveWord:
+      type: string
+      description: "This is a Sensitive word representation."
+
+    Message:
+      type: string
+      description: |-
+        The request message sent in/out with the Request/Response.
+
+    Result:
+      type: object
+      required:
+        - resultCode
+        - resultMsg
+      properties:
+        resultCode:
+          type: number
+        resultMsgCode:
+          type: string
+        resultMsg:
+          type: string
+
+  parameters:
+    senderId:
+      name: senderId
+      in: header
+      required: true
+      schema:
+        type: string
+
+    transactionId:
+      name: transactionId
+      in: header
+      required: true
+      schema:
+        type: string
+    messageId:
+      name: messageId
+      in: header
+      required: true
+      schema:
+        type: string
+    timestamp:
+      name: timestamp
+      in: header
+      required: true
+      schema:
+        type: string
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []

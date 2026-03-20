@@ -1,0 +1,36 @@
+services:
+  swapp-sqlserver:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    container_name: swapp-sqlserver
+    environment:
+      ACCEPT_EULA: "yes"
+      MSSQL_PID: "express"
+      MSSQL_SA_PASSWORD: "mafeka@BSG1!"
+    ports:
+      - "1433:1433"
+    volumes:
+      - swapp-sqlserver-data:/var/opt/mssql
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      sw-net:
+    healthcheck:
+      test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd", "-U", "SA", "-P", "mafeka@BSG1!", "-Q", "SELECT 1" ]
+      interval: 10s
+      retries: 10
+      start_period: 10s
+
+  mssql-tools:
+    image: mcr.microsoft.com/mssql-tools
+    container_name: mssql-tools
+    depends_on:
+      - swapp-sqlserver
+    entrypoint: tail -f /dev/null  # keep container running for exec
+    networks:
+      sw-net:
+
+volumes:
+  swapp-sqlserver-data:
+
+networks:
+  sw-net:
+    driver: bridge

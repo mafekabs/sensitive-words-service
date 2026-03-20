@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=swapp_db
+    username: mafekabs
+    password: mafeka@BSG1!
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
