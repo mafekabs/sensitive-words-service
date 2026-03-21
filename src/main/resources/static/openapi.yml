@@ -13,7 +13,7 @@ info:
     url: https://choosealicense.com/licenses/mit/
   version: 1.0.0
 servers:
-  - url: localhost:8080/api/v1
+  - url: http://localhost:8080/api/v1
 tags:
   - name: sensitive-words
   - name: sensitive-words/{id}
@@ -33,6 +33,14 @@ paths:
           required: true
           schema:
             type: string
+        - name: senderId
+          $ref: '#/components/parameters/senderId'
+        - name: transactionId
+          $ref: '#/components/parameters/transactionId'
+        - name: messageId
+          $ref: '#/components/parameters/messageId'
+        - name: timestamp
+          $ref: '#/components/parameters/timestamp'
       requestBody:
         description: Update an existing sensitive word in storage
         required: true
@@ -72,6 +80,14 @@ paths:
           required: true
           schema:
             type: string
+        - name: senderId
+          $ref: '#/components/parameters/senderId'
+        - name: transactionId
+          $ref: '#/components/parameters/transactionId'
+        - name: messageId
+          $ref: '#/components/parameters/messageId'
+        - name: timestamp
+          $ref: '#/components/parameters/timestamp'
       responses:
         '200':
           description: successful
@@ -103,6 +119,14 @@ paths:
           required: true
           schema:
             type: string
+        - name: senderId
+          $ref: '#/components/parameters/senderId'
+        - name: transactionId
+          $ref: '#/components/parameters/transactionId'
+        - name: messageId
+          $ref: '#/components/parameters/messageId'
+        - name: timestamp
+          $ref: '#/components/parameters/timestamp'
       responses:
         '204':
           description: successful
@@ -124,6 +148,15 @@ paths:
       summary: Add a new sensitive word into storage
       description: Add a new sensitive word into storage.
       operationId: addSensitiveWord
+      parameters:
+        - name: senderId
+          $ref: '#/components/parameters/senderId'
+        - name: transactionId
+          $ref: '#/components/parameters/transactionId'
+        - name: messageId
+          $ref: '#/components/parameters/messageId'
+        - name: timestamp
+          $ref: '#/components/parameters/timestamp'
       requestBody:
         description: Create a new sensitive word into storage
         content:
@@ -155,6 +188,15 @@ paths:
       summary: Get All Sensitive Words.
       description: Get all available sensitive words.
       operationId: getAllSesitiveWords
+      parameters:
+        - name: senderId
+          $ref: '#/components/parameters/senderId'
+        - name: transactionId
+          $ref: '#/components/parameters/transactionId'
+        - name: messageId
+          $ref: '#/components/parameters/messageId'
+        - name: timestamp
+          $ref: '#/components/parameters/timestamp'
       responses:
         '200':
           description: successful
@@ -180,6 +222,15 @@ paths:
       summary: Sanitize Message
       description: Sanitize and musk out sensitive words in the request message.
       operationId: sanitizeMessage
+      parameters:
+        - name: senderId
+          $ref: '#/components/parameters/senderId'
+        - name: transactionId
+          $ref: '#/components/parameters/transactionId'
+        - name: messageId
+          $ref: '#/components/parameters/messageId'
+        - name: timestamp
+          $ref: '#/components/parameters/timestamp'
       requestBody:
         description: Sanitize and musk out sensitive words.
         content:
@@ -345,31 +396,36 @@ components:
       name: senderId
       in: header
       required: true
+      description: A unique System Identifier used for Technical purposes. Currently defined (SWSERVICE_V1 and SWSERVICE_V2)
       schema:
         type: string
 
     transactionId:
       name: transactionId
       in: header
-      required: true
+      required: false
+      description: A unique Business transaction identifier.
       schema:
         type: string
     messageId:
       name: messageId
       in: header
       required: true
+      description: A valid unique used for event correlation UUID.
       schema:
         type: string
     timestamp:
       name: timestamp
       in: header
       required: true
+      description: A valid time stamp used to track event timings
       schema:
         type: string
     id:
       name: id
       in: path
       required: true
+      description: A unique identifier of the sensitive word.
       schema:
         type: string
   securitySchemes:

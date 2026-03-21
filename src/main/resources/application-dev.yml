@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:sqlserver://swapp-sqlserver:1433;databaseName=swapp_db;encrypt=true;trustServerCertificate=true
     username: mafekabs
-    password: mafeka@BSG1!
+    password: mafeka@BSG1
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
   jpa:
