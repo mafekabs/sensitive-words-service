@@ -11,7 +11,7 @@ import za.co.bts.words.sensitive.dto.SensitiveWordResponse;
 import java.util.List;
 
 @ControllerAdvice
-public class GlobalExceptionHandler {
+public class SensitiveWordsExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<SensitiveWordResponse> handleRuntime(RuntimeException ex, HttpServletRequest request) {

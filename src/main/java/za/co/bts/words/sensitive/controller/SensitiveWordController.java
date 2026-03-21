@@ -13,7 +13,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/sensitive-words")
-@ControllerAdvice
 public class SensitiveWordController {
     private final SensitiveWordService sensitiveWordService;
 

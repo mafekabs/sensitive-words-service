@@ -11,37 +11,6 @@ public class EnterpriseResponseUtil {
 
     public EnterpriseResponseUtil() {}
 
-    public static SanitizationResponse createSanitizationResponse(SanitizationRequest request, String sanitizedMessage, boolean isSuccess) {
-        UUID uuid = UUID.randomUUID();
-        LocalDateTime now = LocalDateTime.now();
-        Result result = new Result(
-            isSuccess ? 0 : 1,
-            isSuccess ? "SUCCESS" : "FAILURE",
-            isSuccess ? "Success" : "Failure"
-        );
-
-        EnterpriseHeaderResponse header = new EnterpriseHeaderResponse(
-                SenderIdType.SWSERVICE_V1.name(),
-                request.header().transactionId(),
-                uuid.toString(),
-                request.header().messageId(),
-                now.toString()
-        );
-
-        SanitizationPayload payload = null;
-        if(isSuccess) {
-            payload =  new SanitizationPayload(sanitizedMessage);
-        }
-
-        SanitizationResponse res = new SanitizationResponse(
-            header,
-            result,
-            payload
-        );
-
-        return res;
-    }
-
     public static SensitiveWordResponse createSensitiveWordResponse(EnterpriseHeaderRequest requestHeader, List<SensitiveWordDto> sensitiveWords, boolean isSuccess, String failureMessage) {
         UUID uuid = UUID.randomUUID();
         LocalDateTime now = LocalDateTime.now();
@@ -73,11 +42,43 @@ public class EnterpriseResponseUtil {
         return res;
     }
 
+    public static SanitizationResponse createSanitizationResponse(EnterpriseHeaderRequest requestHeader, String sanitizedMessage, boolean isSuccess, String failureMessage) {
+        UUID uuid = UUID.randomUUID();
+        LocalDateTime now = LocalDateTime.now();
+        Result result = new Result(
+                isSuccess ? 0 : 1,
+                isSuccess ? "SUCCESS" : "FAILURE",
+                isSuccess ? "Success" : failureMessage
+        );
+
+        EnterpriseHeaderResponse header = new EnterpriseHeaderResponse(
+                SenderIdType.getSenderIdTypeByValue(requestHeader.senderId()).name(),
+                requestHeader.transactionId(),
+                uuid.toString(),
+                requestHeader.messageId(),
+                now.toString()
+        );
+
+        SanitizationPayload payload = null;
+        if(isSuccess) {
+            payload =  new SanitizationPayload(sanitizedMessage);
+        }
+
+        SanitizationResponse res = new SanitizationResponse(
+                header,
+                result,
+                payload
+        );
+
+        return res;
+    }
+
+
     public static EnterpriseHeaderRequest createResponseHeader(String senderId, String transactionId, String messageId) {
         UUID uuid = UUID.randomUUID();
         LocalDateTime now = LocalDateTime.now();
         EnterpriseHeaderRequest header = new EnterpriseHeaderRequest(
-                SenderIdType.getSenderIdTypeByValue(senderId).getValue(),
+                SenderIdType.getSenderIdTypeByValue(senderId).name(),
                 transactionId,
                 messageId,
                 now.toString()

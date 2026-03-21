@@ -27,14 +27,20 @@ public class SanitizationServiceImpl implements SanitizationService {
     }
 
     @Override
-    public SanitizationResponse sanitize(SanitizationRequest request) {
+    public SanitizationResponse sanitize(
+        String senderId,
+        String transactionId,
+        String messageId,
+        SanitizationRequest request
+    ) {
 
         try {
             if (request == null || request.payload() == null) {
                 return EnterpriseResponseUtil.createSanitizationResponse(
-                        request,
+                        request.header(),
                         null,
-                        false
+                        false,
+                        "Payload is null"
                 );
             }
 
@@ -42,9 +48,10 @@ public class SanitizationServiceImpl implements SanitizationService {
 
             if (message == null || message.isBlank()) {
                 return EnterpriseResponseUtil.createSanitizationResponse(
-                        request,
-                        message,
-                        true
+                        request.header(),
+                        null,
+                        false,
+                        "Payload message is null"
                 );
             }
 
@@ -52,9 +59,10 @@ public class SanitizationServiceImpl implements SanitizationService {
 
             if (words == null || words.isEmpty()) {
                 return EnterpriseResponseUtil.createSanitizationResponse(
-                        request,
-                        "No sensitive words found from the DB",
-                        false
+                        request.header(),
+                        null,
+                        false,
+                        "No Sensitive Words found in the DB."
                 );
             }
 
@@ -68,30 +76,36 @@ public class SanitizationServiceImpl implements SanitizationService {
 
             String sanitized = pattern
                     .matcher(message)
-                    .replaceAll("****");
+                    .replaceAll(matchResult -> {
+                        String word = matchResult.group();
+                        return "*".repeat(word.length());
+                    });
 
             return EnterpriseResponseUtil.createSanitizationResponse(
-                    request,
+                    request.header(),
                     sanitized,
-                    true
+                    true,
+                    null
             );
 
         } catch (PatternSyntaxException ex) {
             log.error("Invalid regex pattern for sensitive words.", ex);
 
             return EnterpriseResponseUtil.createSanitizationResponse(
-                request,
-                ex.getMessage(),
-                false
+                    request.header(),
+                    null,
+                    false,
+                    "Invalid regex pattern for sensitive words."
         );
 
         } catch (Exception ex) {
             log.error("Unexpected error during sanitization.", ex);
 
             return EnterpriseResponseUtil.createSanitizationResponse(
-                    request,
-                    ex.getMessage(),
-                    false
+                    request.header(),
+                    null,
+                    false,
+                    "Unexpected error during sanitization."
             );
         }
     }

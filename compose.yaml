@@ -1,32 +1,64 @@
 services:
+
   swapp-sqlserver:
     image: mcr.microsoft.com/mssql/server:2025-latest
     container_name: swapp-sqlserver
     environment:
-      ACCEPT_EULA: "yes"
-      MSSQL_PID: "express"
-      MSSQL_SA_PASSWORD: "mafeka@BSG1!"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+      SA_PASSWORD: ${SA_PASSWORD}
     ports:
       - "1433:1433"
     volumes:
       - swapp-sqlserver-data:/var/opt/mssql
-      - ./init-db:/docker-entrypoint-initdb.d
+      - ./init-db:/init-db
     networks:
-      sw-net:
+      - sw-net
     healthcheck:
-      test: [ "CMD", "/opt/mssql-tools/bin/sqlcmd", "-U", "SA", "-P", "mafeka@BSG1!", "-Q", "SELECT 1" ]
+      test: [ "CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P \"$SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1" ]
       interval: 10s
-      retries: 10
-      start_period: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
 
-  mssql-tools:
+  db-init:
     image: mcr.microsoft.com/mssql-tools
-    container_name: mssql-tools
     depends_on:
-      - swapp-sqlserver
-    entrypoint: tail -f /dev/null  # keep container running for exec
+      swapp-sqlserver:
+        condition: service_started   # just wait for container to start
+    volumes:
+      - ./init-db:/init-db
     networks:
-      sw-net:
+      - sw-net
+    entrypoint: >
+      /bin/bash -c "
+      echo 'Waiting for SQL Server...';
+      until /opt/mssql-tools/bin/sqlcmd -S swapp-sqlserver -U SA -P 'mafeka@BSG1' -Q 'SELECT 1' &>/dev/null; do
+        echo 'SQL Server not ready, retrying...';
+        sleep 5;
+      done;
+      echo 'SQL Server is up, initializing DB...';
+      /opt/mssql-tools/bin/sqlcmd -S swapp-sqlserver -U SA -P 'mafeka@BSG1' -C -i /init-db/init.sql;
+      echo 'Database initialized!';
+      "
+
+  app:
+    build: .
+    container_name: app
+    depends_on:
+      swapp-sqlserver:
+        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:sqlserver://swapp-sqlserver:1433;databaseName=swapp_db;encrypt=true;trustServerCertificate=true
+      SPRING_DATASOURCE_USERNAME: mafekabs
+      SPRING_DATASOURCE_PASSWORD: ${SA_PASSWORD}
+    networks:
+      - sw-net
 
 volumes:
   swapp-sqlserver-data:
