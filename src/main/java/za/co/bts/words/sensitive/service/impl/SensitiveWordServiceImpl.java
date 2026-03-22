@@ -33,17 +33,11 @@ public class SensitiveWordServiceImpl implements SensitiveWordService {
     public SensitiveWordResponse addSensitiveWord(SensitiveWordRequest request) {
 
         try {
-            if (request == null || request.payload() == null ||
-                    request.payload().sensitiveWord() == null ||
-                    request.payload().sensitiveWord().word().isBlank()) {
 
-                throw new IllegalArgumentException("Sensitive word must not be blank");
-            }
+            var entity = mapper.toEntity(request.payload().sensitiveWord());
+            var saved = repository.save(entity);
 
-            SensitiveWord entity = mapper.toEntity(request.payload().sensitiveWord());
-            SensitiveWord saved = repository.save(entity);
-
-            SensitiveWordDto dto = mapper.toDto(saved);
+            var dto = mapper.toDto(saved);
 
             return EnterpriseResponseUtil.createSensitiveWordResponse(
                     request.header(),
@@ -79,7 +73,7 @@ public class SensitiveWordServiceImpl implements SensitiveWordService {
             throw new IllegalArgumentException("Invalid UUID format: " + id);
         }
 
-        SensitiveWordDto dto = repository.findById(uuid)
+        var dto = repository.findById(uuid)
                 .map(mapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Sensitive word not found for id: " + id
@@ -115,13 +109,31 @@ public class SensitiveWordServiceImpl implements SensitiveWordService {
     }
 
     @Override
-    public SensitiveWordResponse updateSensitiveWord(String id, SensitiveWordRequest request) {
-        SensitiveWordDto dto = mapper.toDto(repository.save(mapper.toEntity(request.payload().sensitiveWord())));
-        return EnterpriseResponseUtil.createSensitiveWordResponse(
-                request.header(),
-                List.of(dto),
-                true,
-                null);
+    public SensitiveWordResponse updateSensitiveWord(
+            String senderId,
+            String transactionId,
+            String messageId,
+            String id,
+            SensitiveWordRequest request
+    ) {
+
+        try {
+
+            var entity = repository.findById(UUID.fromString(id))
+                    .orElseThrow(() -> new ResourceNotFoundException(String.format("Sensitive word not found for id: ", id)));
+
+            entity.setWord(request.payload().sensitiveWord().word());
+            SensitiveWordDto dto = mapper.toDto(repository.save(entity));
+
+            return EnterpriseResponseUtil.createSensitiveWordResponse(
+                    request.header(),
+                    List.of(dto),
+                    true,
+                    null
+            );
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to update sensitive word", ex);
+        }
     }
 
     @Override
@@ -143,7 +155,7 @@ public class SensitiveWordServiceImpl implements SensitiveWordService {
             throw new IllegalArgumentException("Invalid UUID format: " + id);
         }
 
-        SensitiveWord entity = repository.findById(uuid)
+        var entity = repository.findById(uuid)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Sensitive word not found for id: " + id
                 ));

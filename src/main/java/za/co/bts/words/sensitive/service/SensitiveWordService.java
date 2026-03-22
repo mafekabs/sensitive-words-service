@@ -18,7 +18,11 @@ public interface SensitiveWordService {
             @RequestHeader(value = "transactionId", required = false) String transactionId,
             @RequestHeader("messageId") String messageId
     );
-    SensitiveWordResponse updateSensitiveWord(String id, SensitiveWordRequest request);
+    SensitiveWordResponse updateSensitiveWord(
+            @RequestHeader("senderId") String senderId,
+            @RequestHeader(value = "transactionId", required = false) String transactionId,
+            @RequestHeader("messageId") String messageId,
+            String id, SensitiveWordRequest request);
     void deleteSensitiveWord(
             @RequestHeader("senderId") String senderId,
             @RequestHeader(value = "transactionId", required = false) String transactionId,

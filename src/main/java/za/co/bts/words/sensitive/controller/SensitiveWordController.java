@@ -56,6 +56,15 @@ public class SensitiveWordController {
         );
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<SensitiveWordResponse> updateSensitiveWord(
+            @RequestHeader("senderId") String senderId,
+            @RequestHeader(value = "transactionId", required = false) String transactionId,
+            @RequestHeader("messageId") String messageId,
+            @PathVariable String id,
+            @RequestBody SensitiveWordRequest request) {
+        return ResponseEntity.ok(sensitiveWordService.updateSensitiveWord(senderId, transactionId, messageId, id, request));
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSensitiveWord(

@@ -1,17 +1,24 @@
 spring:
   application:
     name: SensitiveWordsService
+
   profiles:
     active: dev
+
   jackson:
     default-property-inclusion: NON_NULL
+
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
         show_sql: true
+
+flyway:
+  enabled: false
+
 springdoc:
   api-docs:
     enabled: true

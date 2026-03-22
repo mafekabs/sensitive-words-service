@@ -1,0 +1,4 @@
+CREATE TABLE sensitive_words (
+     id UNIQUEIDENTIFIER PRIMARY KEY,
+     word VARCHAR(255) NOT NULL UNIQUE
+);
