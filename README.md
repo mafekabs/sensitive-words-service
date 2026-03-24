@@ -10,7 +10,7 @@
   - The Application and 
   - The MSSQL
 
-**Local Environment Setup: **
+**Local Environment Setup:**
   - Ensure you have Docker Installed
   - Clone this Repo
   - Run "mvn clean install"
