@@ -7,6 +7,6 @@ public record SensitiveWordDto(
         @JsonProperty(required = false)
         String id,
 
-        @NotBlank(message = "Sensitive word is required")
+        @NotBlank(message = "Sensitive word is required.")
         String word
 ) {}

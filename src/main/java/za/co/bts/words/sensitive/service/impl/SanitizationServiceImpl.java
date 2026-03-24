@@ -1,9 +1,8 @@
 package za.co.bts.words.sensitive.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import za.co.bts.words.sensitive.common.EnterpriseResponseUtil;
+import za.co.bts.words.sensitive.common.EnterpriseUtil;
 import za.co.bts.words.sensitive.dto.*;
 import za.co.bts.words.sensitive.model.SensitiveWord;
 import za.co.bts.words.sensitive.repository.SensitiveWordRepository;
@@ -15,56 +14,25 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
-import static java.awt.SystemColor.text;
-
 @Service
 @Slf4j
 public class SanitizationServiceImpl implements SanitizationService {
     private final SensitiveWordRepository repository;
+    private final EnterpriseUtil enUtil;
 
-    public SanitizationServiceImpl(SensitiveWordRepository repository) {
+    public SanitizationServiceImpl(SensitiveWordRepository repository, EnterpriseUtil enUtil) {
         this.repository = repository;
+        this.enUtil = enUtil;
     }
 
     @Override
-    public SanitizationResponse sanitize(
-        String senderId,
-        String transactionId,
-        String messageId,
-        SanitizationRequest request
-    ) {
+    public SanitizationResponse sanitize(SanitizationRequest request) {
 
         try {
-            if (request == null || request.payload() == null) {
-                return EnterpriseResponseUtil.createSanitizationResponse(
-                        request.header(),
-                        null,
-                        false,
-                        "Payload is null"
-                );
-            }
 
-            String message = request.payload().message();
-
-            if (message == null || message.isBlank()) {
-                return EnterpriseResponseUtil.createSanitizationResponse(
-                        request.header(),
-                        null,
-                        false,
-                        "Payload message is null"
-                );
-            }
+            String message = request.getPayload().message();
 
             List<SensitiveWord> words = repository.findAll();
-
-            if (words == null || words.isEmpty()) {
-                return EnterpriseResponseUtil.createSanitizationResponse(
-                        request.header(),
-                        null,
-                        false,
-                        "No Sensitive Words found in the DB."
-                );
-            }
 
             String regex = words.stream()
                     .map(SensitiveWord::getWord)
@@ -81,28 +49,18 @@ public class SanitizationServiceImpl implements SanitizationService {
                         return "*".repeat(word.length());
                     });
 
-            return EnterpriseResponseUtil.createSanitizationResponse(
-                    request.header(),
+            return enUtil.createSanitizationResponse(
+                    request.getHeader(),
                     sanitized,
                     true,
                     null
             );
 
-        } catch (PatternSyntaxException ex) {
-            log.error("Invalid regex pattern for sensitive words.", ex);
-
-            return EnterpriseResponseUtil.createSanitizationResponse(
-                    request.header(),
-                    null,
-                    false,
-                    "Invalid regex pattern for sensitive words."
-        );
-
         } catch (Exception ex) {
             log.error("Unexpected error during sanitization.", ex);
 
-            return EnterpriseResponseUtil.createSanitizationResponse(
-                    request.header(),
+            return enUtil.createSanitizationResponse(
+                    request.getHeader(),
                     null,
                     false,
                     "Unexpected error during sanitization."

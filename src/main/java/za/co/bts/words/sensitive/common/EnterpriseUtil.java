@@ -1,17 +1,18 @@
 package za.co.bts.words.sensitive.common;
 
+import org.springframework.stereotype.Component;
 import za.co.bts.words.sensitive.dto.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class EnterpriseResponseUtil {
+@Component
+public class EnterpriseUtil {
 
-    public EnterpriseResponseUtil() {}
+    public EnterpriseUtil() {}
 
-    public static SensitiveWordResponse createSensitiveWordResponse(EnterpriseHeaderRequest requestHeader, List<SensitiveWordDto> sensitiveWords, boolean isSuccess, String failureMessage) {
+    public SensitiveWordResponse createSensitiveWordResponse(EnterpriseHeaderRequest requestHeader, List<SensitiveWordDto> sensitiveWords, boolean isSuccess, String failureMessage) {
         UUID uuid = UUID.randomUUID();
         LocalDateTime now = LocalDateTime.now();
         Result result = new Result(
@@ -22,9 +23,9 @@ public class EnterpriseResponseUtil {
 
         EnterpriseHeaderResponse header = new EnterpriseHeaderResponse(
                 SenderIdType.SWSERVICE_V1.name(),
-                requestHeader.transactionId(),
+                requestHeader.getTransactionId(),
                 uuid.toString(),
-                requestHeader.messageId(),
+                requestHeader.getMessageId(),
                 now.toString()
         );
 
@@ -42,7 +43,7 @@ public class EnterpriseResponseUtil {
         return res;
     }
 
-    public static SanitizationResponse createSanitizationResponse(EnterpriseHeaderRequest requestHeader, String sanitizedMessage, boolean isSuccess, String failureMessage) {
+    public SanitizationResponse createSanitizationResponse(EnterpriseHeaderRequest requestHeader, String sanitizedMessage, boolean isSuccess, String failureMessage) {
         UUID uuid = UUID.randomUUID();
         LocalDateTime now = LocalDateTime.now();
         Result result = new Result(
@@ -52,10 +53,10 @@ public class EnterpriseResponseUtil {
         );
 
         EnterpriseHeaderResponse header = new EnterpriseHeaderResponse(
-                SenderIdType.getSenderIdTypeByValue(requestHeader.senderId()).name(),
-                requestHeader.transactionId(),
+                SenderIdType.getSenderIdTypeByValue(requestHeader.getSenderId()).name(),
+                requestHeader.getTransactionId(),
                 uuid.toString(),
-                requestHeader.messageId(),
+                requestHeader.getMessageId(),
                 now.toString()
         );
 
@@ -74,7 +75,7 @@ public class EnterpriseResponseUtil {
     }
 
 
-    public static EnterpriseHeaderRequest createResponseHeader(String senderId, String transactionId, String messageId) {
+    public EnterpriseHeaderRequest createResponseHeader(String senderId, String transactionId, String messageId) {
         UUID uuid = UUID.randomUUID();
         LocalDateTime now = LocalDateTime.now();
         EnterpriseHeaderRequest header = new EnterpriseHeaderRequest(
@@ -85,5 +86,14 @@ public class EnterpriseResponseUtil {
         );
 
         return header;
+    }
+
+    public EnterpriseHeaderRequest enrichSensitiveWordHeader(String senderId,  String transactionId, String messageId, String timestamp) {
+        return EnterpriseHeaderRequest.builder()
+                .senderId(senderId)
+                .transactionId(transactionId)
+                .messageId(messageId)
+                .timestamp(timestamp)
+                .build();
     }
 }

@@ -45,6 +45,18 @@ public class TestUtil {
                 header,
                 new SensitiveWordRequestPayload(sensitiveWord)
         );
+
+        return  request;
+    }
+
+    public SanitizationRequest createSanitizationRequest(String message) {
+        EnterpriseHeaderRequest header = new EnterpriseHeaderRequest(SenderIdType.SWSERVICE_V1.name(), null, UUID.randomUUID().toString(), LocalDateTime.now().toString());
+        SanitizationPayload payload = new SanitizationPayload(message);
+        SanitizationRequest request = new SanitizationRequest(
+                header,
+                payload
+        );
+
         return  request;
     }
 
