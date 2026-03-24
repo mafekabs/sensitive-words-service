@@ -1,5 +1,3 @@
-Sensitive Words API
-
 Implementation Details:
  - A Docarized Spring-Boot 3.3.3 RESTFul API with
  - Java 17
