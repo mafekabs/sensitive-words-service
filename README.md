@@ -24,6 +24,7 @@
  - cd into the project root and
  - Run "mvn clean test"
  - Goto the target/jacoco/site/ directory and open the index page for ease of coverage viewing.
+ - I have also included the Postman Collection in the Root of the project for ease of testing.
   
 
 
