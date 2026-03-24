@@ -1,0 +1,280 @@
+{
+  "info": {
+    "_postman_id": "b884f05f-6742-436e-9080-a7be5701f086",
+    "name": "Sensitive_Words",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "7735442"
+  },
+  "item": [
+    {
+      "name": "AddSensitiveWord",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "senderId",
+            "value": "SWSERVICE_V1",
+            "type": "text"
+          },
+          {
+            "key": "messageId",
+            "value": "{{MessageID}}",
+            "type": "text"
+          },
+          {
+            "key": "timestamp",
+            "value": "{{$isoTimestamp}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"header\": {\r\n        \"senderId\": \"SWSERVICE_V1\",\r\n        \"messageId\": \"{{MessageID}}\",\r\n        \"timestamp\": \"{{$isoTimestamp}}\"\r\n    },\r\n    \"payload\": {\r\n        \"sensitiveWord\": {\r\n            \"word\": \"BENNETT\"\r\n        }\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/sensitive-words",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "sensitive-words"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetAllSensitiveWords",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "senderId",
+            "value": "SWSERVICE_V1",
+            "type": "text"
+          },
+          {
+            "key": "messageId",
+            "value": "{{MessageID}}",
+            "type": "text"
+          },
+          {
+            "key": "timestamp",
+            "value": "{{$isoTimestamp}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/sensitive-words",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "sensitive-words"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "FindSensitiveWordById",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "senderId",
+            "value": "SWSERVICE_V1",
+            "type": "text"
+          },
+          {
+            "key": "messageId",
+            "value": "{{MessageID}}",
+            "type": "text"
+          },
+          {
+            "key": "timestamp",
+            "value": "{{$isoTimestamp}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/sensitive-words/d6327a7b-bffc-4670-8064-216d425896ef",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "sensitive-words",
+            "d6327a7b-bffc-4670-8064-216d425896ef"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UpdateSensitiveWord",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "senderId",
+            "value": "SWSERVICE_V1",
+            "type": "text"
+          },
+          {
+            "key": "messageId",
+            "value": "{{MessageID}}",
+            "type": "text"
+          },
+          {
+            "key": "timestamp",
+            "value": "{{$isoTimestamp}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"header\": {\r\n        \"senderId\": \"SWSERVICE_V1\",\r\n        \"messageId\": \"{{MessageID}}\",\r\n        \"timestamp\": \"{{$isoTimestamp}}\"\r\n    },\r\n    \"payload\": {\r\n        \"sensitiveWord\": {\r\n            \"word\": \"ACTION\"\r\n        }\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/sensitive-words/d71ef2d4-030e-4e28-81f2-3e49039903f2",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "sensitive-words",
+            "d71ef2d4-030e-4e28-81f2-3e49039903f2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DeleteSensitiveWord",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "senderId",
+            "value": "SWSERVICE_V1",
+            "type": "text"
+          },
+          {
+            "key": "messageId",
+            "value": "{{MessageID}}",
+            "type": "text"
+          },
+          {
+            "key": "timestamp",
+            "value": "{{$isoTimestamp}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/sensitive-words/d6327a7b-bffc-4670-8064-216d425896ef",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "sensitive-words",
+            "d6327a7b-bffc-4670-8064-216d425896ef"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SanitizeWord",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "senderId",
+            "value": "SWSERVICE_V1",
+            "type": "text"
+          },
+          {
+            "key": "messageId",
+            "value": "{{MessageID}}",
+            "type": "text"
+          },
+          {
+            "key": "timestamp",
+            "value": "{{$isoTimestamp}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"header\": {\r\n    \"senderId\": \"SWSERVICE_V1\",\r\n    \"transactionId\": \"txn-123456\",\r\n    \"messageId\": \"{{MessageID}}\",\r\n    \"timestamp\": \"{{$isoTimestamp}}\"\r\n  },\r\n  \"payload\": {\r\n    \"message\": \"My Domain name is botshtechsolutions.co.za\"\r\n  }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/sanitizations",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "sanitizations"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
